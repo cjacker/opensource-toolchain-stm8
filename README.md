@@ -33,7 +33,7 @@ Gennerally, for STM8 development, it's not neccesary to build OpenOCD yourself, 
 
 ## SDK
 
-TODO
+TODO, at least provide some examples and project templates.
 
 ## Programming
 There is two flashing tools for STM8 you can use under linux, it depends on how you connect the development board to PC.
@@ -52,8 +52,8 @@ sudo install -m0755 stm8flash /usr/bin/
 
 
 ### for USB/UART adapter or on board chip (no debugging support)
-TODO
+TODO, stm8gal and how to activate BSL.
 
-## Debugging with STLINK and OpenOCD
-TODO
+## Debugging with gdb
+TODO, stm8-binutils-gdb
 
