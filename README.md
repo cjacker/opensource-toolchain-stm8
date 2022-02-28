@@ -13,17 +13,16 @@ You need:
 * a STLINK USB adapter(no matter version) with SWIM interface, for flashing and debugging.
 * a USB/UART adapter if it is not on development board. it can be used for UART flashing/programming if with bootloader support, but lack of debugging support.
 
-
 # Toolchain overview
 
-The opensource toolchain for STM8 under linux includes:
+The opensource toolchain for STM8 under linux consist of:
 * SDCC as compiler
 * stm8flash, flashing with STLINK adapter
 * stm8gal, flashing with USB/UART adapter
 * openocd/stm8-binutils-gdb, as debugger, a STLINK adapter is mandary.
 
 # SDCC Compiler
-Most Linux distributions shipped SDCC in their repositories. You can install it by using yum or apt.
+Most Linux distributions shipped SDCC in their repositories. You can install it by yum or apt.
 
 If you really want to build it yourself, at least you need make/bison/flex/libtool/g++/boost development package/zlib development package/etc. installed, and the building process is really simple:
 ```
@@ -35,9 +34,9 @@ if the `prefix` does not set to standard dir (such as '/usr' or '/usr/local'), y
 
 # OpenOCD
 
-Most Linux dist shipped OpenOCD, you can install it from repositories by yum or apt.
+Most Linux dist ships OpenOCD package, you can install it by yum or apt.
 
-For STM8 development, it's not neccesary to build OpenOCD yourself, there is no more patches needed.
+For STM8 development, it's not neccesary to patch and build OpenOCD yourself.
 
 If you really want to build it, please refer to "OpenOCD for Programming and Debugging" section of ![Opensource toolchain for gd32vf103](https://github.com/cjacker/opensource-toolchain-gd32vf103).
 
@@ -46,10 +45,12 @@ If you really want to build it, please refer to "OpenOCD for Programming and Deb
 TODO, at least provide some examples and project templates.
 
 # Flashing/Programming
-There is two flashing tools for STM8 you can use under linux, it depends on how you connect the development board to PC.
+There is two flashing tools for STM8 you can use with linux, it depends on how you wire up the development board to PC.
+
+It may be a little bit weird, but you should understand that 'If you want to enable UART flashing support, you have to have a STLINK adapter and use stm8flash to flash a special firmware first' or 'you have an empty development board never flashed with STLINK'
 
 ## for STLINK adapter
-You can use STLINK SWIM to connect STM8 development board to PC linux, the PROS is that it does support flashing and debugging. the CONS is that you need buy a STLINK adapter and wire it up, it not very convenient since a lot of developement board today have a USB/UART chip on board. But you need activate BSL and 'BSL activate' under linux need a STLINK and stm8flash, it's better for you to prepare one STLINK adapter. 
+You can use STLINK SWIM interface to connect STM8 development board to PC linux, the PROS is it does support flashing and debugging. the CONS is you have to buy a STLINK adapter and wire it up. But If you need to activate STM8 bootloader(BSL) under linux, a STLINK adapter and stm8flash are mandary. 
 
 You need have gcc/libusb development package installed before building and installing stm8flash:
 
