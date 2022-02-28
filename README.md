@@ -1,6 +1,7 @@
 # Opensource toolchain for STM8
 
-**NOTE, this tutorial is not complete yet** 
+**NOTE, most of works of STM8 development with Linux was done by Georg Icking-Konert, 
+for example, stm8gal flashing tool, SPL patches for SDCC and opensource SDL8_headers, please refer to https://github.com/gicking** 
 
 ST's 8-bit microcontroller platform is implemented around a high-performance 8-bit core and a state-of-the-art set of peripherals. This platform is manufactured using an ST-proprietary 130 nm embedded non-volatile memory technology.
 The STM8 allows fast and safe development through enhanced stack pointer operations, advanced addressing modes and new instructions.
