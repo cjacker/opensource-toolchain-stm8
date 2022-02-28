@@ -1,6 +1,6 @@
 # Opensource toolchain for STM8
 
-**NOTE, this tutorial is not complete now** 
+**NOTE, this tutorial is not complete yet** 
 
 ST's 8-bit microcontroller platform is implemented around a high-performance 8-bit core and a state-of-the-art set of peripherals. This platform is manufactured using an ST-proprietary 130 nm embedded non-volatile memory technology.
 The STM8 allows fast and safe development through enhanced stack pointer operations, advanced addressing modes and new instructions.
