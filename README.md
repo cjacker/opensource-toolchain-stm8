@@ -43,7 +43,7 @@ If you really want to build it, please refer to "OpenOCD for Programming and Deb
 
 # SDK
 ## Baremetal
-"Baremetal programming" is not that difficult for MCU, that's to say, you can always do something without using any libraries/SDKs.
+"Baremetal programming" is not that difficult for MCU, you can always do something without using any libraries/SDKs.
 
 Here is an example for blink a LED wired up as PD0->Resister->LED->GND.
 
@@ -96,7 +96,7 @@ There is two flashing tools for STM8 you can use with linux, it depends on how y
 
 It may be a little bit weird, but you should understand that 'If you want to enable UART flashing support, you have to have a STLINK adapter and use stm8flash to flash a special firmware first' or 'you have an empty development board never flashed with STLINK'
 
-## for STLINK adapter
+## with STLINK adapter
 You can use STLINK SWIM interface to connect STM8 development board to PC linux, the PROS is it does support flashing and debugging. the CONS is you have to buy a STLINK adapter and wire it up. But If you need to activate STM8 bootloader(BSL) under linux, a STLINK adapter and stm8flash are mandary. 
 
 You need have gcc/libusb development package installed before building and installing stm8flash:
@@ -109,7 +109,7 @@ sudo install -m0755 stm8flash /usr/bin/
 ```
 
 
-## for USB/UART adapter or on board chip (no debugging support)
+## with USB/UART adapter or on board UART chip (no debugging support)
 TODO, how to activate BSL and stm8gal
 
 # Debugging with stm8-gdb
