@@ -89,7 +89,7 @@ sdcc -lstm8 -mstm8 blink.c
 
 ST officially provide 'STM8 Standard Peripheral Library' for STM8 MCUs, you can download it from [here](https://www.st.com/content/st_com/en/search.html#q=STM8%20Standard%20Peripheral%20Library-t=tools-page=1)
 
-<img src="https://user-images.githubusercontent.com/1625340/156116884-ab592ccc-176a-4d1a-a678-8c5786d1f902.png" width="60%"/>
+<img src="https://user-images.githubusercontent.com/1625340/156116884-ab592ccc-176a-4d1a-a678-8c5786d1f902.png" width="40%"/>
 
 
 **NOTE:**
