@@ -130,5 +130,36 @@ sudo install -m0755 stm8flash /usr/bin/
 TODO, how to activate BSL and stm8gal
 
 # Debugging with stm8-gdb
-TODO, stm8-binutils-gdb
+[stm8-binutils-gdb](https://stm8-binutils-gdb.sourceforge.io/) project implement the opensource GDB debugger for STM8.
+
+Up to this tutorial written, the latest version is '2021-07-18', follow below instructions to build and install it, it will download binutils/gdb tarball automatically from upstream:
+
+```
+wget https://sourceforge.net/projects/stm8-binutils-gdb/files/stm8-binutils-gdb-sources-2021-07-18.tar.gz/download -O
+stm8-binutils-gdb-sources-2021-07-18.tar.gz
+tar -xf stm8-binutils-gdb-sources-2021-07-18.tar.gz
+cd stm8-binutils-gdb-sources
+./patch_binutils.sh
+./configure_binutils.sh
+cd binutils-2.30
+make
+sudo make install
+```
+
+stm8-gdb use ELF binary format with debug symbols, you have to use below flags to build your source code:
+```
+--out-fmt-elf --all-callee-saves --debug --verbose --stack-auto --fverbose-asm  --float-reent --no-peep
+```
+
+For instance, we use above blink.c:
+```
+sdcc -lstm8 -mstm8 --out-fmt-elf --all-callee-saves --debug --verbose --stack-auto --fverbose-asm  --float-reent --no-peep blink.c
+```
+
+After compilation, the `blink.elf` will be generated.
+
+**NOTE:** If you have multiple source files in your project, these flags should be applied to every source file when creating object code. otherwise, the final ELF binary will not have debug symbols embeded in.
+
+
+
 
