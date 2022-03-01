@@ -42,6 +42,52 @@ For STM8 development, it's not neccesary to patch and build OpenOCD yourself.
 If you really want to build it, please refer to "OpenOCD for Programming and Debugging" section of ![Opensource toolchain for gd32vf103](https://github.com/cjacker/opensource-toolchain-gd32vf103).
 
 # SDK
+## Baremetal
+"Baremetal programming" is not that difficult for MCU, that's to say, you can always do something without using any libraries/SDKs.
+
+Here is an example for blink a LED wired up as PD0->Resister->LED->GND.
+
+You must read the [datasheet](https://www.alldatasheet.com/view.jsp?Searchword=STM8S208MB) first to findout the memory and register map, here I use STM8S208MB and the io register map as below:
+
+![stm8-io-register-map](https://user-images.githubusercontent.com/1625340/156100874-f85b6188-23c0-4a2f-b251-be41505b5b44.png)
+
+These registers are pretty much self-explanatory. here’s a brief overview: `DDR` is the direction register, which configures a pin as either an input or an output. After we configured `DDR` we can use `ODR` for writing or `IDR` for reading pin state. Control registers `CR1` and `CR2` are used for configuring internal pull-ups, output speed and selecting between push-pull or pseudo open-drain.
+
+```
+//blink.c
+
+#include <stdint.h>
+#define F_CPU 2000000UL
+#define _SFR_(mem_addr)     (*(volatile uint8_t *)(0x5000 + (mem_addr)))
+/* PORT D */
+#define PD_ODR      _SFR_(0x0F)
+#define PD_DDR      _SFR_(0x11)
+#define PD_CR1      _SFR_(0x12)
+#define LED_PIN     0
+static inline void delay_ms(uint16_t ms) {
+    uint32_t i;
+    for (i = 0; i < ((F_CPU / 18000UL) * ms); i++)
+        __asm__("nop");
+}
+void main() {
+    PD_DDR |= (1 << LED_PIN); // configure PD0 as output
+    PD_CR1 |= (1 << LED_PIN); // push-pull mode
+    while (1) {
+        /* toggle pin every 250ms */
+        PD_ODR ^= (1 << LED_PIN);
+        delay_ms(250);
+    }
+}
+```
+and built it:
+
+```
+sdcc -lstm8 -mstm8 blink.c
+```
+
+## SFL - Official SDK
+
+## STM8_headers
 
 TODO, at least provide some examples and project templates.
 
@@ -64,7 +110,7 @@ sudo install -m0755 stm8flash /usr/bin/
 
 
 ## for USB/UART adapter or on board chip (no debugging support)
-TODO, stm8gal and how to activate BSL.
+TODO, how to activate BSL and stm8gal
 
 # Debugging with stm8-gdb
 TODO, stm8-binutils-gdb
