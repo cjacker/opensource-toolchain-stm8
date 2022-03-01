@@ -85,7 +85,7 @@ and built it:
 sdcc -lstm8 -mstm8 blink.c
 ```
 
-## SPL - ST Official Standard Peripheral Library
+## SPL - ST's official Standard Peripheral Library
 
 ST officially provide 'STM8 Standard Peripheral Library' for STM8 MCUs, you can download it from [here](https://www.st.com/content/st_com/en/search.html#q=STM8%20Standard%20Peripheral%20Library-t=tools-page=1)
 
