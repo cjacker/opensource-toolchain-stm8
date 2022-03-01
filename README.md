@@ -89,9 +89,12 @@ sdcc -lstm8 -mstm8 blink.c
 
 ST officially provide 'STM8 Standard Peripheral Library' for STM8 MCUs, you can download it from [here](https://www.st.com/content/st_com/en/search.html#q=STM8%20Standard%20Peripheral%20Library-t=tools-page=1)
 
+![screenshot-2022-03-01-14-29-20](https://user-images.githubusercontent.com/1625340/156116884-ab592ccc-176a-4d1a-a678-8c5786d1f902.png)
+
+
 **NOTE:**
-* **you have register and login before download, also there is a license you need to read and agree before download**
-* **There are 4 packages, choose the correct one according to your MCU model.**
+* **you have to sign up and sign in, and there is also a license need to read and agree before download**
+* **There are 4 packages, choose the correct one according to your MCU model**
 
 According the license, it seems can be redistributed with original license kept.
 
