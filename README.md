@@ -96,7 +96,7 @@ ST officially provide 'STM8 Standard Peripheral Library' for STM8 MCUs, you can 
 * **you have to sign up and sign in, and there is also a license need to read and agree before download**
 * **There are 4 packages, choose the correct one according to your MCU model**
 
-According the license, it seems can be redistributed with original license kept.
+According to ST's license, it seems this SPLs can be redistributed with original license kept.
 
 As metioned beginning, Georg Icking-Konert done a great job to provide a set of patches to enable SPL work with SDCC.
 
