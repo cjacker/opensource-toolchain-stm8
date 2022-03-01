@@ -45,9 +45,9 @@ If you really want to build it, please refer to "OpenOCD for Programming and Deb
 ## Baremetal
 "Baremetal programming" is not that difficult for MCU, you can always do something without using any libraries/SDKs.
 
-Here is an example for blink a LED wired up as PD0->Resister->LED->GND.
+Here is an example to blink a LED wired up as PD0->Resister->LED->GND.
 
-You must read the [datasheet](https://www.alldatasheet.com/view.jsp?Searchword=STM8S208MB) first to findout the memory and register map, here I use STM8S208MB and the io register map as below:
+You must read the [datasheet](https://www.alldatasheet.com/view.jsp?Searchword=STM8S208MB) first to find out the memory and register map, here I use STM8S208MB and the io register map as below:
 
 <img src="https://user-images.githubusercontent.com/1625340/156101703-486034e5-f086-4f96-925f-3e35a1e5a943.png" width="50%"/>
 
@@ -89,7 +89,7 @@ sdcc -lstm8 -mstm8 blink.c
 
 ST officially provide 'STM8 Standard Peripheral Library' for STM8 MCUs, you can download it from [here](https://www.st.com/content/st_com/en/search.html#q=STM8%20Standard%20Peripheral%20Library-t=tools-page=1)
 
-![screenshot-2022-03-01-14-29-20](https://user-images.githubusercontent.com/1625340/156116884-ab592ccc-176a-4d1a-a678-8c5786d1f902.png)
+<img src="https://user-images.githubusercontent.com/1625340/156116884-ab592ccc-176a-4d1a-a678-8c5786d1f902.png" width="60%"/>
 
 
 **NOTE:**
