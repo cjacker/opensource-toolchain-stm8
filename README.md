@@ -57,28 +57,38 @@ These registers are pretty much self-explanatory. here’s a brief overview: `DD
 //blink.c
 
 #include <stdint.h>
-#define F_CPU 2000000UL
 #define _SFR_(mem_addr)     (*(volatile uint8_t *)(0x5000 + (mem_addr)))
 /* PORT D */
 #define PD_ODR      _SFR_(0x0F)
 #define PD_DDR      _SFR_(0x11)
 #define PD_CR1      _SFR_(0x12)
+
+/* CLOCK */
+#define CLK         _SFR_(0xc6)
+
 #define LED_PIN     0
+
+
+#define F_CPU 16000000UL //16Mhz
 static inline void delay_ms(uint16_t ms) {
     uint32_t i;
     for (i = 0; i < ((F_CPU / 18000UL) * ms); i++)
         __asm__("nop");
 }
+
 void main() {
+    CLK = 0x00; // switch to 16Mhz
+
     PD_DDR |= (1 << LED_PIN); // configure PD0 as output
     PD_CR1 |= (1 << LED_PIN); // push-pull mode
     while (1) {
-        /* toggle pin every 250ms */
+        /* toggle pin every 1000ms */
         PD_ODR ^= (1 << LED_PIN);
-        delay_ms(250);
+        delay_ms(1000);
     }
 }
 ```
+
 and built it:
 
 ```
@@ -102,22 +112,80 @@ As metioned beginning, Georg Icking-Konert done a great job to provide a set of 
 
 Please refer to https://github.com/gicking/STM8-SPL_SDCC_patch and patch the SPL yourself after download.
 
+[Here](https://github.com/cjacker/opensource-toolchain-stm8/tree/main/blink-SPL) provide a blink example for SPL.
+
+for STM8S208MB, you should download 'en.stsw-stm8069_v2.3.1.zip'
+
+```
+git clone https://github.com/cjacker/opensource-toolchain-stm8.git
+cd opensource-toolchain-stm8
+# download 'en.stsw-stm8069_v2.3.1.zip'
+unzip en.stsw-stm8069_v2.3.1.zip
+git clone https://github.com/gicking/STM8-SPL_SDCC_patch.git
+cat STM8-SPL_SDCC_patch/STM8S_StdPeriph_Lib_V2.3.1_sdcc.patch |patch -p1
+cd blink-SPL
+make
+```
 
 ## STM8_headers
 Georg Icking-Konert also had another great opensource project named ["STM8_headers"](https://github.com/gicking/STM8_headers) for all STM8 microcontroller series, namely STM8A, STM8S, STM8L, STM8AF and STM8AL. it's MIT license and you can use this project instead of SPL.
 
+for example, blink.c using STM8_headers:
+```
+//blink.c using STM8_headers
 
+#include "STM8S208MB.h"
+#define LED_PORT   sfr_PORTD
+#define LED_PIN    PIN0
+
+// toggle specified pin. Pass port struct as pointer
+void toggle_pin(PORT_t *port, uint8_t pin) {
+
+  port->ODR.byte ^= pin;
+
+} // toggle_pin
+
+void main (void) {
+  uint32_t  i;
+  // switch to 16MHz (default is 2MHz)
+  sfr_CLK.CKDIVR.byte = 0x00;
+  // configure LED pin as output
+  LED_PORT.DDR.byte = LED_PIN;    // input(=0) or output(=1)
+  LED_PORT.CR1.byte = LED_PIN;    // input: 0=float, 1=pull-up; output: 0=open-drain, 1=push-pull
+  LED_PORT.CR2.byte = LED_PIN;    // input: 0=no exint, 1=exint; output: 0=2MHz slope, 1=10MHz slope
+  // main loop
+  while(1) {
+    // toggle LED. Pass port struct as pointer
+    toggle_pin(&LED_PORT, LED_PIN);
+    // simple wait ~1000ms @ 16MHz
+    for (i=0; i<600000L; i++)
+      NOP();
+  } // main loop
+} // main
+```
+
+[Here](https://github.com/cjacker/opensource-toolchain-stm8/tree/main/blink-STM8_headers) provide a blink example for STM8_headers:
+```
+git clone https://github.com/cjacker/opensource-toolchain-stm8.git
+cd opensource-toolchain-stm8
+git clone https://github.com/gicking/STM8_headers.git
+cd blink-STM8_headers
+make
+```
 
 # Flashing/Programming
-There is two flashing tools for STM8 you can use with linux, it depends on how you wire up the development board to PC.
+There are two flashing tools for STM8 you can use with linux, stm8flash works with STLINK and stm8gal works with UART.
 
-It may be a little bit weird, but you should understand that 'If you want to enable UART flashing support, you have to have a STLINK adapter and use stm8flash to flash a special firmware first' or 'you have an empty development board never flashed with STLINK'
+It may be a little bit weird, but you should understand, If you want to enable UART flashing support:
+* You have to use a STLINK adapter and stm8flash to flash a special firmware first
+* Or you have an empty development board never flashed with STLINK
 
-## with STLINK adapter
-You can use STLINK SWIM interface to connect STM8 development board to PC linux, the PROS is it does support flashing and debugging. the CONS is you have to buy a STLINK adapter and wire it up. But If you need to activate STM8 bootloader(BSL) under linux, a STLINK adapter and stm8flash are mandary. 
+## Flashing with STLINK adapter
+You can use STLINK SWIM interface to wire up STM8 development board to PC linux, the PROS is it supports flashing and debugging, the CONS is you have to buy a STLINK adapter and wire it up. But as mentioned above, a STLINK adapter and stm8flash are mandary to activate UART flashing support. 
 
-You need gcc/libusb development package installed before building and installing stm8flash:
+You need gcc/libusb development packages installed before build and install stm8flash:
 
+installation:
 ```
 git clone https://github.com/vdudouyt/stm8flash.git 
 cd stm8flash
@@ -125,8 +193,19 @@ make
 sudo install -m0755 stm8flash /usr/bin/
 ```
 
+for instance, here use baremetal blink.c as example:
+```
+sdcc -lstm8 -mstm8 blink.c
+sudo stm8flash -cstlinkv2 -pstm8s208mb -w blink.ihx
+```
+or you can try examples with this repo:
+```
+make
+make swim
+```
 
 ## with USB/UART adapter or on board UART chip (no debugging support)
+
 TODO, how to activate BSL and stm8gal
 
 # Debugging with stm8-gdb
