@@ -49,7 +49,7 @@ Here is an example for blink a LED wired up as PD0->Resister->LED->GND.
 
 You must read the [datasheet](https://www.alldatasheet.com/view.jsp?Searchword=STM8S208MB) first to findout the memory and register map, here I use STM8S208MB and the io register map as below:
 
-![stm8-io-register-map](https://user-images.githubusercontent.com/1625340/156100874-f85b6188-23c0-4a2f-b251-be41505b5b44.png)
+<img src="https://user-images.githubusercontent.com/1625340/156101703-486034e5-f086-4f96-925f-3e35a1e5a943.png" width="50%"/>
 
 These registers are pretty much self-explanatory. here’s a brief overview: `DDR` is the direction register, which configures a pin as either an input or an output. After we configured `DDR` we can use `ODR` for writing or `IDR` for reading pin state. Control registers `CR1` and `CR2` are used for configuring internal pull-ups, output speed and selecting between push-pull or pseudo open-drain.
 
