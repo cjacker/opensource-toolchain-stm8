@@ -85,11 +85,11 @@ and built it:
 sdcc -lstm8 -mstm8 blink.c
 ```
 
-## SFL - Official SDK
+## SPL - ST Official Standard Peripheral Library
+TODO
 
 ## STM8_headers
-
-TODO, at least provide some examples and project templates.
+TODO
 
 # Flashing/Programming
 There is two flashing tools for STM8 you can use with linux, it depends on how you wire up the development board to PC.
