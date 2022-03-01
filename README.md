@@ -86,10 +86,24 @@ sdcc -lstm8 -mstm8 blink.c
 ```
 
 ## SPL - ST Official Standard Peripheral Library
-TODO
+
+ST officially provide 'STM8 Standard Peripheral Library' for STM8 MCUs, you can download it from [here](https://www.st.com/content/st_com/en/search.html#q=STM8%20Standard%20Peripheral%20Library-t=tools-page=1)
+
+**NOTE:**
+* **you have register and login before download, also there is a license you need to read and agree before download**
+* **There are 4 packages, choose the correct one according to your MCU model.**
+
+According the license, it seems can be redistributed with original license kept.
+
+As metioned beginning, Georg Icking-Konert done a great job to provide a set of patches to enable SPL work with SDCC.
+
+Please refer to https://github.com/gicking/STM8-SPL_SDCC_patch and patch the SPL yourself after download.
+
 
 ## STM8_headers
-TODO
+Georg Icking-Konert also had another great opensource project named ["STM8_headers"](https://github.com/gicking/STM8_headers) for all STM8 microcontroller series, namely STM8A, STM8S, STM8L, STM8AF and STM8AL. it's MIT license and you can use this project instead of SPL.
+
+
 
 # Flashing/Programming
 There is two flashing tools for STM8 you can use with linux, it depends on how you wire up the development board to PC.
@@ -99,7 +113,7 @@ It may be a little bit weird, but you should understand that 'If you want to ena
 ## with STLINK adapter
 You can use STLINK SWIM interface to connect STM8 development board to PC linux, the PROS is it does support flashing and debugging. the CONS is you have to buy a STLINK adapter and wire it up. But If you need to activate STM8 bootloader(BSL) under linux, a STLINK adapter and stm8flash are mandary. 
 
-You need have gcc/libusb development package installed before building and installing stm8flash:
+You need gcc/libusb development package installed before building and installing stm8flash:
 
 ```
 git clone https://github.com/vdudouyt/stm8flash.git 
