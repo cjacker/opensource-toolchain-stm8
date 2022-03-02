@@ -1,7 +1,7 @@
 # Opensource toolchain for STM8
 
 **NOTE, most of works of STM8 development with Linux was done by Georg Icking-Konert, 
-for example, stm8gal flashing tool, SPL patches for SDCC and opensource sdk STM8_headers, please refer to https://github.com/gicking** 
+for example, stm8gal flashing tool, SPL patches for SDCC and STM8_headers, please refer to https://github.com/gicking** 
 
 ST's 8-bit microcontroller platform is implemented around a high-performance 8-bit core and a state-of-the-art set of peripherals. This platform is manufactured using an ST-proprietary 130 nm embedded non-volatile memory technology.
 The STM8 allows fast and safe development through enhanced stack pointer operations, advanced addressing modes and new instructions.
@@ -9,10 +9,11 @@ The STM8 allows fast and safe development through enhanced stack pointer operati
 For more infomation, refer to https://www.st.com/en/microcontrollers-microprocessors/stm8-8-bit-mcus.html
 
 # Hardware requirements
+
 You need:
 * a development board with STM8 MCU.
-* a STLINK USB adapter(no matter version) with SWIM interface, for flashing and debugging.
-* a USB/UART adapter if it is no one on development board. it can be used for UART flashing/programming with bootloader support, but lack of debugging support.
+* a STLINK USB adapter(no matter version) with SWIM interface (and 5v VCC), for flashing and debugging.
+* a USB/UART adapter if there is no one on development board. it can be used for UART flashing/programming when bootloader enabled, but lack of debugging support.
 
 # Toolchain overview
 
@@ -20,7 +21,7 @@ The opensource toolchain for STM8 under linux consist of:
 * SDCC as compiler
 * stm8flash, flashing with STLINK adapter
 * stm8gal, flashing with USB/UART adapter
-* openocd/stm8-binutils-gdb, as debugger, a STLINK adapter is mandary.
+* openocd/stm8-binutils-gdb as debugger, a STLINK adapter is mandary.
 
 # SDCC Compiler
 Most Linux distributions shipped SDCC in their repositories. You can install it by yum or apt.
@@ -34,7 +35,6 @@ make install
 if the `prefix` does not set to standard dir (such as '/usr' or '/usr/local'), you need add the `<prefix>/bin` dir to PATH env.
 
 # OpenOCD
-
 Most Linux dist ships OpenOCD package, you can install it by yum or apt.
 
 For STM8 development, it's not neccesary to patch and build OpenOCD yourself.
@@ -42,8 +42,9 @@ For STM8 development, it's not neccesary to patch and build OpenOCD yourself.
 If you really want to build it, please refer to "OpenOCD for Programming and Debugging" section of ![Opensource toolchain for gd32vf103](https://github.com/cjacker/opensource-toolchain-gd32vf103).
 
 # SDK
+
 ## Baremetal
-"Baremetal programming" is not that difficult for MCU, you can always do something without using any libraries/SDKs.
+"Baremetal programming" is not difficult for MCU, you can always do something without using any libraries/SDKs.
 
 Here is an example to blink a LED wired up as PD0->Resister->LED->GND.
 
@@ -103,18 +104,16 @@ ST officially provide 'STM8 Standard Peripheral Library' for STM8 MCUs, you can 
 
 
 **NOTE:**
-* **you have to sign up and sign in, and there is also a license need to read and agree before download**
-* **There are 4 packages, choose the correct one according to your MCU model**
+* **you have to sign up and sign in first, and there is also a license need to be read carefully and agreed before download**
+* **There are 4 packages, choose one according to your MCU model**
 
-According to ST's license, it seems this SPLs can be redistributed with original license kept.
+According to ST's license, it seems these SPLs can be redistributed with original license kept.
 
 As metioned beginning, Georg Icking-Konert done a great job to provide a set of patches to enable SPL work with SDCC.
 
-Please refer to https://github.com/gicking/STM8-SPL_SDCC_patch and patch the SPL yourself after download.
+Please refer to https://github.com/gicking/STM8-SPL_SDCC_patch and patch the SPL yourself.
 
-[Here](https://github.com/cjacker/opensource-toolchain-stm8/tree/main/blink-SPL) provide a blink example for SPL.
-
-for STM8S208MB, you should download 'en.stsw-stm8069_v2.3.1.zip'
+for STM8S208MB, you should download 'en.stsw-stm8069_v2.3.1.zip', [Here](https://github.com/cjacker/opensource-toolchain-stm8/tree/main/blink-SPL) provide a blink example for SPL.
 
 ```
 git clone https://github.com/cjacker/opensource-toolchain-stm8.git
@@ -127,10 +126,10 @@ cd blink-SPL
 make
 ```
 
-After blink-SPL example building successfully, you will get 'blink.ihx' and various other files in example dir.
+After blink-SPL example building successfully, you will get 'blink.ihx'(we will flash it to development board later) and various other files in example dir.
 
 ## STM8_headers
-Georg Icking-Konert also had another great opensource project named ["STM8_headers"](https://github.com/gicking/STM8_headers) for all STM8 microcontroller series, namely STM8A, STM8S, STM8L, STM8AF and STM8AL. it's MIT license and you can use this project instead of SPL.
+Georg Icking-Konert also had another great opensource project named ["STM8_headers"](https://github.com/gicking/STM8_headers) for all STM8 microcontroller series, namely STM8A, STM8S, STM8L, STM8AF and STM8AL. it's MIT license.
 
 for example, blink.c using STM8_headers:
 ```
@@ -174,13 +173,13 @@ git clone https://github.com/gicking/STM8_headers.git
 cd blink-STM8_headers
 make
 ```
-After blink-STM8_headers example building successfully, you will get 'blink.ihx' and various other files in example dir.
+After blink-STM8_headers example building successfully, you will get 'blink.ihx' and various other files.
 
 # Flashing/Programming
 There are two flashing tools for STM8 can be used with linux, stm8flash works with STLINK and stm8gal works with UART.
 
-It may be a little bit weird, but you should know that if you want to enable UART flashing:
-* You have to use a STLINK adapter and stm8flash to flash a special firmware first.
+It may be a little bit weird, but you should know:
+* You have to use a STLINK adapter and stm8flash to flash a special firmware first to enable bootloader.
 * Or you have an empty development board never flashed with STLINK.
 
 ## Flashing with STLINK adapter
@@ -422,8 +421,7 @@ yl             0x10     16
 
 Please refer to gdb manual for more infomation on how to use GDB.
 
-
-
+By the way, do NOT forget to flash the BSL_activate firmware again if you want to use UART flashing support later.
 
 
 
