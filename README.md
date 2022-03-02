@@ -13,7 +13,7 @@ For more infomation, refer to https://www.st.com/en/microcontrollers-microproces
 You need:
 * a development board with STM8 MCU.
 * a STLINK USB adapter(no matter version) with SWIM interface (and 5v VCC), for flashing and debugging.
-* a USB/UART adapter if there is no one on development board. it can be used for UART flashing/programming when bootloader enabled, but lack of debugging support.
+* **[optional]**a USB/UART adapter if there is no one on development board. it can be used for UART flashing/programming when bootloader enabled, but lack of debugging support.
 
 # Toolchain overview
 
