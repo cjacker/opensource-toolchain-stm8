@@ -256,7 +256,7 @@ sudo stm8flash -cstlinkv2 -pstm8s208mb -w STM8S207/main.ihx
 This firmware will set the requires option bytes, also blink the LED on board. by default, it blink PH2 for STM8S207 and PD0 for STM8S105, you can modify the codes according to your development board.
 
 ### stm8gal
-After bootloader enabled, we can use stm8gal and UART to flash the development board.
+After bootloader enabled, we can use stm8gal and UART to flash the development board wired up with a USB cable.
 
 stm8gal is a tool for uplading hexfiles to the STM8 microcontroller via UART or SPI , using the built-in ROM bootloader. 
 
@@ -290,7 +290,39 @@ stm8gal (v1.5.0)
 done with program
 ```
 
-# Debugging with stm8-gdb
+**NOTE, as mentioned above, if you use STLINK adapter flashing the board again, you may need to re-activate the bootloader.**
+
+# Debugging with stm8-gdb/OpenOCD
+
+## OpenOCD connection
+
+A STLINK adapter and OpenOCD are mandary for debugging.
+
+Within this repo, a OpenOCD interface cfg 'stlink.cfg' is provided for various known STLINK versions. 
+
+Before continue reading, please wire up the STLINK adapter and development board, and try launch a terminal and run:
+```
+openocd -f st-link.cfg -f /usr/share/openocd/scripts/target/stm8s.cfg -c "init" -c "reset halt"
+```
+Here is the console output:
+```
+Open On-Chip Debugger 0.11.0
+Licensed under GNU GPL v2
+For bug reports, read
+        http://openocd.org/doc/doxygen/bugs.html
+srst_only separate srst_gates_jtag srst_open_drain connect_deassert_srst
+
+Info : STLINK V2J27S6 (API v2) VID:PID 0483:3748
+Info : Target voltage: 3.270139
+Info : clock speed 800 kHz
+Info : starting gdb server for stm8s.cpu on 3333
+Info : Listening on port 3333 for gdb connections
+target halted due to debug-request, pc: 0x00006000
+Info : Listening on port 6666 for tcl connections
+Info : Listening on port 4444 for telnet connections
+```
+
+## Install stm8-gdb
 [stm8-binutils-gdb](https://stm8-binutils-gdb.sourceforge.io/) project implement the opensource GDB debugger for STM8.
 
 Up to this tutorial written, the latest version is '2021-07-18', follow below instructions to build and install it, it will download binutils/gdb tarball automatically from upstream:
@@ -307,19 +339,92 @@ make
 sudo make install
 ```
 
+## Enable debug build
+
 stm8-gdb use ELF binary format with debug symbols, you have to use below flags to build your source code:
 ```
 --out-fmt-elf --all-callee-saves --debug --verbose --stack-auto --fverbose-asm  --float-reent --no-peep
 ```
 
-For instance, we use above blink.c:
+For instance:
 ```
 sdcc -lstm8 -mstm8 --out-fmt-elf --all-callee-saves --debug --verbose --stack-auto --fverbose-asm  --float-reent --no-peep blink.c
 ```
 
-After compilation, the `blink.elf` will be generated.
+After compilation, a `blink.elf` will be generated. you can try `make debug` in 'blink-baremetal' example.
 
 **NOTE:** If you have multiple source files in your project, these flags should be applied to every source file when creating object code. otherwise, the final ELF binary will not have debug symbols embeded in.
+
+
+## Debug
+After blink.elf with debug symbols built, with openocd connected, launch 2nd terminal and try:
+```
+stm8-gdb -q blink.elf
+```
+A gdb sesscion will be opened:
+```
+(gdb) run
+Starting program: /home/cjacker/opensource-toolchain-stm8/blink-baremetal/blink.elf
+Remote debugging using localhost:3333
+0x00006000 in ?? ()
+Loading section SSEG, size 0x1 lma 0x1
+Loading section HOME, size 0x7 lma 0x8000
+Loading section GSINIT, size 0x1a lma 0x8007
+Loading section GSFINAL, size 0x3 lma 0x8021
+Loading section CODE, size 0xcb lma 0x8024
+Start address 0x8007, load size 240
+Transfer rate: 1 KB/sec, 48 bytes/write.
+(gdb) interrupt
+(gdb)
+Program received signal SIGINT, Interrupt.
+0x0000807e in main () at blink.c:19
+19          for (i = 0; i < ((F_CPU / 18000UL) * ms); i++)
+```
+or you can use:
+
+```
+$ stm8-gdb -q blink.elf
+Reading symbols from blink.elf...done.
+(gdb) target extended-remote :3333
+Remote debugging using :3333
+0x00008086 in main () at blink.c:19
+19          for (i = 0; i < ((F_CPU / 18000UL) * ms); i++)
+(gdb) load
+Loading section SSEG, size 0x1 lma 0x1
+Loading section HOME, size 0x7 lma 0x8000
+Loading section GSINIT, size 0x1a lma 0x8007
+Loading section GSFINAL, size 0x3 lma 0x8021
+Loading section CODE, size 0xcb lma 0x8024
+Start address 0x8007, load size 240
+Transfer rate: 1 KB/sec, 48 bytes/write.
+(gdb) break main
+Breakpoint 1 at 0x805f: file blink.c, line 24.
+(gdb) continue
+Continuing.
+
+Breakpoint 1, main () at blink.c:24
+24          CLK = 0x00; // switch to 16Mhz
+(gdb) n
+26          PD_DDR |= (1 << LED_PIN); // configure PD0 as output
+(gdb) info registers
+pc             0x8063   32867
+a              0x0      0
+x              0x0      0
+y              0x10     16
+sp             0x17ff   6143
+cc             0x2b     43
+xh             0x0      0
+xl             0x0      0
+yh             0x0      0
+yl             0x10     16
+(gdb)
+```
+
+Please refer to gdb manual for more infomation on how to use GDB.
+
+
+
+
 
 
 
