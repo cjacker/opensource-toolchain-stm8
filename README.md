@@ -231,7 +231,7 @@ set 0x487F to 0xAA
 
 There is various way to accomplish this, the STVP for windows officially provide by ST have option bytes configuration support, but as I know, it only set 0x487E and can not set 0x487F.
 
-For linux, there is no STVP provided. Here we use another way: flash a firmware to set these optionbytes with STLINK. after that, the UART flashing can be used until you flash this development board with STLINK again.
+For linux, there is no STVP provided. Here we use another way: flash a firmware once to setup these optionbytes with STLINK. after that, the UART flashing can be used until you flash this development board with STLINK again.
 
 There are BSL activate codes in stm8gal repo, you need to build it yourself:
 
@@ -252,7 +252,7 @@ After building successfully, "STM8S207/main.ihx" will be generated.
 sudo stm8flash -cstlinkv2 -pstm8s208mb -w STM8S207/main.ihx
 ```
 
-This firmware will set the requires option bytes, also blink the LED on board. by default, it blink PH2 for STM8S207 and PD0 for STM8S105, you can modify the codes according to your development board.
+This firmware will set the requires option bytes, also blink the LED on board. by default, it toggle PH2 for STM8S207 and PD0 for STM8S105, you can modify the codes according to your development board.
 
 ### stm8gal
 After bootloader enabled, we can use stm8gal and UART to flash the development board wired up with a USB cable.
@@ -291,7 +291,7 @@ done with program
 
 **NOTE, as mentioned above, if you use STLINK adapter flashing the board again, you may need to re-activate the bootloader.**
 
-# Debugging with stm8-gdb/OpenOCD
+# Debugging and flashing with stm8-gdb/OpenOCD
 
 ## OpenOCD connection
 
@@ -420,10 +420,4 @@ yl             0x10     16
 ```
 
 Please refer to gdb manual for more infomation on how to use GDB.
-
-By the way, do NOT forget to flash the BSL_activate firmware again if you want to use UART flashing support later.
-
-
-
-
 
