@@ -358,12 +358,12 @@ After compilation, a `blink.elf` will be generated. you can try `make debug` in 
 ## Debug
 After blink.elf with debug symbols built, with openocd connected, launch 2nd terminal and try:
 ```
-stm8-gdb -q blink.elf
+stm8-gdb -q ./blink.elf
 ```
 A gdb sesscion will be opened:
 ```
 (gdb) run
-Starting program: /home/cjacker/opensource-toolchain-stm8/blink-baremetal/blink.elf
+Starting program: ./blink.elf
 Remote debugging using localhost:3333
 0x00006000 in ?? ()
 Loading section SSEG, size 0x1 lma 0x1
