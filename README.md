@@ -12,7 +12,7 @@ For more infomation, refer to https://www.st.com/en/microcontrollers-microproces
 You need:
 * a development board with STM8 MCU.
 * a STLINK USB adapter(no matter version) with SWIM interface, for flashing and debugging.
-* a USB/UART adapter if it is not on development board. it can be used for UART flashing/programming if with bootloader support, but lack of debugging support.
+* a USB/UART adapter if it is no one on development board. it can be used for UART flashing/programming with bootloader support, but lack of debugging support.
 
 # Toolchain overview
 
@@ -119,13 +119,15 @@ for STM8S208MB, you should download 'en.stsw-stm8069_v2.3.1.zip'
 ```
 git clone https://github.com/cjacker/opensource-toolchain-stm8.git
 cd opensource-toolchain-stm8
-# download 'en.stsw-stm8069_v2.3.1.zip'
+cp en.stsw-stm8069_v2.3.1.zip .
 unzip en.stsw-stm8069_v2.3.1.zip
 git clone https://github.com/gicking/STM8-SPL_SDCC_patch.git
 cat STM8-SPL_SDCC_patch/STM8S_StdPeriph_Lib_V2.3.1_sdcc.patch |patch -p1
 cd blink-SPL
 make
 ```
+
+After blink-SPL example building successfully, you will get 'blink.ihx' and various other files in example dir.
 
 ## STM8_headers
 Georg Icking-Konert also had another great opensource project named ["STM8_headers"](https://github.com/gicking/STM8_headers) for all STM8 microcontroller series, namely STM8A, STM8S, STM8L, STM8AF and STM8AL. it's MIT license and you can use this project instead of SPL.
@@ -172,20 +174,21 @@ git clone https://github.com/gicking/STM8_headers.git
 cd blink-STM8_headers
 make
 ```
+After blink-STM8_headers example building successfully, you will get 'blink.ihx' and various other files in example dir.
 
 # Flashing/Programming
-There are two flashing tools for STM8 you can use with linux, stm8flash works with STLINK and stm8gal works with UART.
+There are two flashing tools for STM8 can be used with linux, stm8flash works with STLINK and stm8gal works with UART.
 
-It may be a little bit weird, but you should understand, If you want to enable UART flashing support:
-* You have to use a STLINK adapter and stm8flash to flash a special firmware first
-* Or you have an empty development board never flashed with STLINK
+It may be a little bit weird, but you should know that if you want to enable UART flashing:
+* You have to use a STLINK adapter and stm8flash to flash a special firmware first.
+* Or you have an empty development board never flashed with STLINK.
 
 ## Flashing with STLINK adapter
-You can use STLINK SWIM interface to wire up STM8 development board to PC linux, the PROS is it supports flashing and debugging, the CONS is you have to buy a STLINK adapter and wire it up. But as mentioned above, a STLINK adapter and stm8flash are mandary to activate UART flashing support. 
+First, please connect the corresponding pins of SWIM interface and development board.
 
 You need gcc/libusb development packages installed before build and install stm8flash:
 
-installation:
+Installation:
 ```
 git clone https://github.com/vdudouyt/stm8flash.git 
 cd stm8flash
@@ -193,20 +196,99 @@ make
 sudo install -m0755 stm8flash /usr/bin/
 ```
 
-for instance, here use baremetal blink.c as example:
+After everything wired up, for instance, here use baremetal blink.c as example:
+
 ```
 sdcc -lstm8 -mstm8 blink.c
 sudo stm8flash -cstlinkv2 -pstm8s208mb -w blink.ihx
 ```
-or you can try examples with this repo:
+
+or you can try some examples within this repo:
+
 ```
 make
 make swim
 ```
 
-## with USB/UART adapter or on board UART chip (no debugging support)
+Run `stm8flash --help` to get more usage tips.
 
-TODO, how to activate BSL and stm8gal
+## Flashing with UART (no debugging support)
+
+### How to enable bootloader
+As mentioned above, a STLINK adapter is mandary to enable UART flashing support. acctually, we need STLINK adapter and stm8flash to change some 'option bytes' of STM8 MCU to enable the 'bootloader' (BSL). Please refer to [UM0560 "STM8 bootloader user manual"](https://www.st.com/resource/en/user_manual/cd00201192-stm8-bootloader-stmicroelectronics.pdf) and corresponding datasheet of the MCU you use for more infomation.
+
+Not all STM8 models have a bootloader, the support list as below (from UM0560):
+<img src="https://user-images.githubusercontent.com/1625340/156280459-aabdcd6a-39e9-4806-9bb3-689c06a71933.png" width="60%"/>
+
+Option bytes of STM8S208MB (from STM8S208MB datasheet):
+<img src="https://user-images.githubusercontent.com/1625340/156280543-c6d7b658-7653-43b1-bc04-f9964648bc7c.png" width="60%"/>
+
+What we need to enable bootloader is:
+
+```
+set 0x487E to 0x55
+set 0x487F to 0xAA
+```
+
+There is various way to accomplish this, the STVP for windows officially provide by ST have option bytes configuration support, but as I know, it only set 0x487E and can not set 0x487F.
+
+For linux, there is no STVP provided. Here we use another way: flash a firmware to set these optionbytes with STLINK. after that, the UART flashing can be used until you flash this development board with STLINK again.
+
+There are BSL activate codes in stm8gal repo, you need to build it yourself:
+
+```
+git clone https://github.com/gicking/stm8gal.git
+cd BSL_activate
+make DEVICE=STM8S207 # suitable for STM8S208MB
+```
+
+by the way, If you use STM8S105, you should:
+```
+make DEVICE=STM8S105
+```
+
+After building successfully, "STM8S207/main.ihx" will be generated.
+
+```
+sudo stm8flash -cstlinkv2 -pstm8s208mb -w STM8S207/main.ihx
+```
+
+This firmware will set the requires option bytes, also blink the LED on board. by default, it blink PH2 for STM8S207 and PD0 for STM8S105, you can modify the codes according to your development board.
+
+### stm8gal
+After bootloader enabled, we can use stm8gal and UART to flash the development board.
+
+stm8gal is a tool for uplading hexfiles to the STM8 microcontroller via UART or SPI , using the built-in ROM bootloader. 
+
+```
+git clone https://github.com/gicking/stm8gal.git
+make
+sudo install -m0755 stm8gal /usr/bin
+```
+For usage:
+```
+stm8gal --help
+```
+
+For flashing:
+```
+sudo stm8gal -p /dev/ttyUSB0 -w blink.ihx -reset 0
+```
+
+when it prompt for 'synchronize', press the RESET button once on your development board:
+```
+stm8gal (v1.5.0)
+  open serial port '/dev/ttyUSB0' ... done
+  synchronize ... done (ACK)
+  get device info ... done (STM8S; 128kB flash)
+  load 'blink.ihx' ... done
+  convert IHX ... done
+  write 219B / 219B ... done
+  read 219B / 219B ... done
+  verify memory ... done
+  jump to 0x8000 ... done
+done with program
+```
 
 # Debugging with stm8-gdb
 [stm8-binutils-gdb](https://stm8-binutils-gdb.sourceforge.io/) project implement the opensource GDB debugger for STM8.
