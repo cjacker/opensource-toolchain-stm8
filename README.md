@@ -11,17 +11,17 @@ For more infomation, refer to https://www.st.com/en/microcontrollers-microproces
 # Hardware requirements
 
 You need:
-* a development board with STM8 MCU.
-* a STLINK USB adapter(no matter version) with SWIM interface (and 5v VCC), for flashing and debugging.
-* optional, a USB/UART adapter if there is no one on development board. it can be used for UART flashing/programming when bootloader enabled, but lack of debugging support.
+* A development board with STM8 MCU.
+* A STLINK USB adapter(no matter version) with SWIM interface (and 5v VCC), for flashing and debugging.
+* Optional, a USB/UART adapter if there is no one on development board. it can be used for UART flashing when bootloader enabled, but lack of debugging support.
 
 # Toolchain overview
 
-The opensource toolchain for STM8 under linux consist of:
-* SDCC as compiler
-* stm8flash, flashing with STLINK adapter
-* stm8gal, flashing with USB/UART adapter
-* openocd/stm8-binutils-gdb as debugger, a STLINK adapter is mandary.
+The opensource toolchain for STM8 under linux consists of:
+* Compiler, SDCC
+* Debugger, OpenOCD/stm8-binutils-gdb and a STLINK adapter is mandary.
+* SDKs, includes baremetal programming, Official SPL SDK and STM8_headers. 
+* Flashing tool, stm8flash with STLINK adapter and stm8gal with USB/UART adapter
 
 # SDCC Compiler
 Most Linux distributions shipped SDCC in their repositories. You can install it by yum or apt.
@@ -32,18 +32,17 @@ If you really want to build it yourself, at least you need make/bison/flex/libto
 make
 make install
 ```
-if the `prefix` does not set to standard dir (such as '/usr' or '/usr/local'), you need add the `<prefix>/bin` dir to PATH env.
+If the `prefix` does not set to standard dir (such as '/usr' or '/usr/local'), you need add the `<prefix>/bin` dir to PATH env.
 
 # OpenOCD
 Most Linux dist ships OpenOCD package, you can install it by yum or apt.
 
 For STM8 development, it's not neccesary to patch and build OpenOCD yourself.
 
-If you really want to build it, please refer to "OpenOCD for Programming and Debugging" section of ![Opensource toolchain for gd32vf103](https://github.com/cjacker/opensource-toolchain-gd32vf103).
-
 # SDK
 
 ## Baremetal
+
 "Baremetal programming" is not difficult for MCU, you can always do something without using any libraries/SDKs.
 
 Here is an example to blink a LED wired up as PD0->Resister->LED->GND.
@@ -65,7 +64,7 @@ These registers are pretty much self-explanatory. here’s a brief overview: `DD
 #define PD_CR1      _SFR_(0x12)
 
 /* CLOCK */
-#define CLK         _SFR_(0xc6)
+#define CLK         _SFR_(0xC6)
 
 #define LED_PIN     0
 
@@ -107,9 +106,7 @@ ST officially provide 'STM8 Standard Peripheral Library' for STM8 MCUs, you can 
 * **you have to sign up and sign in first, and there is also a license need to be read carefully and agreed before download**
 * **There are 4 packages, choose one according to your MCU model**
 
-According to ST's license, it seems these SPLs can be redistributed with original license kept.
-
-As metioned beginning, Georg Icking-Konert done a great job to provide a set of patches to enable SPL work with SDCC.
+As mentioned beginning, Georg Icking-Konert done a great job to provide a set of patches to enable SPL work with SDCC.
 
 Please refer to https://github.com/gicking/STM8-SPL_SDCC_patch and patch the SPL yourself.
 
@@ -126,14 +123,15 @@ cd blink-SPL
 make
 ```
 
-After blink-SPL example building successfully, you will get 'blink.ihx'(we will flash it to development board later) and various other files in example dir.
+After the example built successfully, you will get 'blink.ihx' (we will flash it to development board later) and various other files in example dir.
 
 ## STM8_headers
+
 Georg Icking-Konert also had another great opensource project named ["STM8_headers"](https://github.com/gicking/STM8_headers) for all STM8 microcontroller series, namely STM8A, STM8S, STM8L, STM8AF and STM8AL. it's MIT license.
 
-for example, blink.c using STM8_headers:
+For example, blink.c using STM8_headers:
 ```
-//blink.c using STM8_headers
+//blink.c, using STM8_headers
 
 #include "STM8S208MB.h"
 #define LED_PORT   sfr_PORTD
@@ -173,9 +171,8 @@ git clone https://github.com/gicking/STM8_headers.git
 cd blink-STM8_headers
 make
 ```
-After blink-STM8_headers example building successfully, you will get 'blink.ihx' and various other files.
 
-# Flashing/Programming
+# Flashing
 There are two flashing tools for STM8 can be used with linux, stm8flash works with STLINK and stm8gal works with UART.
 
 It may be a little bit weird, but you should know:
@@ -183,7 +180,6 @@ It may be a little bit weird, but you should know:
 * Or you have an empty development board never flashed with STLINK.
 
 ## Flashing with STLINK adapter
-First, please connect the corresponding pins of SWIM interface and development board.
 
 You need gcc/libusb development packages installed before build and install stm8flash:
 
@@ -195,7 +191,7 @@ make
 sudo install -m0755 stm8flash /usr/bin/
 ```
 
-After everything wired up, for instance, here use baremetal blink.c as example:
+Then connect the corresponding pins of SWIM interface and the development board. here use baremetal blink.c as example:
 
 ```
 sdcc -lstm8 -mstm8 blink.c
@@ -214,7 +210,7 @@ Run `stm8flash --help` to get more usage tips.
 ## Flashing with UART (no debugging support)
 
 ### How to enable bootloader
-As mentioned above, a STLINK adapter is mandary to enable UART flashing support. acctually, we need STLINK adapter and stm8flash to change some 'option bytes' of STM8 MCU to enable the 'bootloader' (BSL). Please refer to [UM0560 "STM8 bootloader user manual"](https://www.st.com/resource/en/user_manual/cd00201192-stm8-bootloader-stmicroelectronics.pdf) and corresponding datasheet of the MCU you use for more infomation.
+As mentioned above, a STLINK adapter is mandary to enable UART flashing support. actually, we need STLINK adapter and stm8flash to change some 'option bytes' of STM8 MCU to enable the 'bootloader' (BSL). Please refer to [UM0560 "STM8 bootloader user manual"](https://www.st.com/resource/en/user_manual/cd00201192-stm8-bootloader-stmicroelectronics.pdf) and corresponding datasheet of the MCU you use for more information.
 
 Not all STM8 models have a bootloader, the support list as below (from UM0560):
 <img src="https://user-images.githubusercontent.com/1625340/156280459-aabdcd6a-39e9-4806-9bb3-689c06a71933.png" width="60%"/>
@@ -229,16 +225,16 @@ set 0x487E to 0x55
 set 0x487F to 0xAA
 ```
 
-There is various way to accomplish this, the STVP for windows officially provide by ST have option bytes configuration support, but as I know, it only set 0x487E and can not set 0x487F.
+There is various way to accomplish this, the STVP for windows officially provide by ST have option bytes configuration support, but as I know, it only set 0x487E and does not set 0x487F.
 
-For linux, there is no STVP provided. Here we use another way: flash a firmware once to setup these optionbytes with STLINK. after that, the UART flashing can be used until you flash this development board with STLINK again.
+For linux, there is no STVP provided. Here we use another way: flash a firmware once to setup these option bytes. after that, the UART flashing can be used until you flash this development board with STLINK again.
 
 There are BSL activate codes in stm8gal repo, you need to build it yourself:
 
 ```
 git clone https://github.com/gicking/stm8gal.git
 cd BSL_activate
-make DEVICE=STM8S207 # suitable for STM8S208MB
+make DEVICE=STM8S207 # ok for STM8S208MB
 ```
 
 by the way, If you use STM8S105, you should:
@@ -252,7 +248,7 @@ After building successfully, "STM8S207/main.ihx" will be generated.
 sudo stm8flash -cstlinkv2 -pstm8s208mb -w STM8S207/main.ihx
 ```
 
-This firmware will set the requires option bytes, also blink the LED on board. by default, it toggle PH2 for STM8S207 and PD0 for STM8S105, you can modify the codes according to your development board.
+This firmware will set the option bytes, also blink a LED on board, by default, it toggle PH2 for STM8S207 and PD0 for STM8S105, you can modify the codes according to your development board.
 
 ### stm8gal
 After bootloader enabled, we can use stm8gal and UART to flash the development board wired up with a USB cable.
@@ -297,9 +293,9 @@ done with program
 
 A STLINK adapter and OpenOCD are mandary for debugging.
 
-Within this repo, a OpenOCD interface cfg 'stlink.cfg' is provided for various known STLINK versions. 
+Within this repo, an OpenOCD interface cfg 'stlink.cfg' is provided for various known STLINK adapters. 
 
-Before continue reading, please wire up the STLINK adapter and development board, and try launch a terminal and run:
+Before continue reading, please wire up the STLINK adapter and development board, launch a terminal and run:
 ```
 openocd -f st-link.cfg -f /usr/share/openocd/scripts/target/stm8s.cfg -c "init" -c "reset halt"
 ```
@@ -322,7 +318,7 @@ Info : Listening on port 4444 for telnet connections
 ```
 
 ## Install stm8-gdb
-[stm8-binutils-gdb](https://stm8-binutils-gdb.sourceforge.io/) project implement the opensource GDB debugger for STM8.
+[stm8-binutils-gdb](https://stm8-binutils-gdb.sourceforge.io/) project implements the GDB debugger for STM8.
 
 Up to this tutorial written, the latest version is '2021-07-18', follow below instructions to build and install it, it will download binutils/gdb tarball automatically from upstream:
 
@@ -340,7 +336,7 @@ sudo make install
 
 ## Enable debug build
 
-stm8-gdb use ELF binary format with debug symbols, you have to use below flags to build your source code:
+stm8-gdb works with ELF binary format with debug symbols, you have to use below flags to build your source code:
 ```
 --out-fmt-elf --all-callee-saves --debug --verbose --stack-auto --fverbose-asm  --float-reent --no-peep
 ```
@@ -350,9 +346,9 @@ For instance:
 sdcc -lstm8 -mstm8 --out-fmt-elf --all-callee-saves --debug --verbose --stack-auto --fverbose-asm  --float-reent --no-peep blink.c
 ```
 
-After compilation, a `blink.elf` will be generated. you can try `make debug` in 'blink-baremetal' example.
+After compilation, a `blink.elf` will be generated. you can also try `make debug` in 'blink-baremetal' example.
 
-**NOTE:** If you have multiple source files in your project, these flags should be applied to every source file when creating object code. otherwise, the final ELF binary will not have debug symbols embeded in.
+**NOTE:** If you have multiple source files in your project, these flags should be applied to every source file when creating the object code. otherwise, the final ELF binary will not have debug symbols embeded in.
 
 
 ## Debug
