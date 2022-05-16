@@ -4,6 +4,8 @@
 #define STM8S105 1
 
 #include <stdint.h>
+
+// find all these register defs in datasheet.
 #define _SFR_(mem_addr)     (*(volatile uint8_t *)(0x5000 + (mem_addr)))
 
 // PORT D 
