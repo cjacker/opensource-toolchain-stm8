@@ -1,5 +1,7 @@
 # Opensource toolchain for STM8
 
+**NOTE: the MIT license of this repo means all individual resources made by myself, the content of the tutorial and the example codes is licensed under MIT. All third-party opensource projects, upstream source codes and patches to other opensource projects will/should follow their own LICENSE.**
+
 **NOTE, most of works of STM8 development with Linux was done by Georg Icking-Konert, 
 for example, stm8gal flashing tool, SPL patches for SDCC and STM8_headers, please refer to https://github.com/gicking** 
 
