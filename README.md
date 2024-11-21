@@ -324,11 +324,16 @@ Info : Listening on port 4444 for telnet connections
 
 Up to this tutorial written, the latest version is '2021-07-18', follow below instructions to build and install it, it will download binutils/gdb tarball automatically from upstream:
 
+Patches used to build stm8-binutils-gdb can be found [here](https://github.com/cjacker/opensource-toolchain-stm8/patches)
+
 ```
 wget https://sourceforge.net/projects/stm8-binutils-gdb/files/stm8-binutils-gdb-sources-2021-07-18.tar.gz/download -O
 stm8-binutils-gdb-sources-2021-07-18.tar.gz
 tar -xf stm8-binutils-gdb-sources-2021-07-18.tar.gz
 cd stm8-binutils-gdb-sources
+cat <where you put the patch>/stm8-gdb-disable-python.patch|patch -p1
+cp <where you put the patches>/0019-Fix-incorrect-use-of-is-operator-for-comparison-in-p.patch .
+cp <where you put the patches>/binutils-wchar.patch .
 ./patch_binutils.sh
 ./configure_binutils.sh
 cd binutils-2.30
