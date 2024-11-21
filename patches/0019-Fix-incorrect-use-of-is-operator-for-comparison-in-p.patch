@@ -1,0 +1,21 @@
+diff -Nur binutils-2.30/gdb/python/lib/gdb/command/prompt.py binutils-2.30.new/gdb/python/lib/gdb/command/prompt.py
+--- binutils-2.30/gdb/python/lib/gdb/command/prompt.py	2018-01-05 12:07:23.000000000 +0800
++++ binutils-2.30.new/gdb/python/lib/gdb/command/prompt.py	2022-02-24 17:45:18.520473101 +0800
+@@ -45,7 +45,7 @@
+         self.hook_set = False
+ 
+     def get_show_string (self, pvalue):
+-        if self.value is not '':
++        if self.value:
+            return "The extended prompt is: " + self.value
+         else:
+            return "The extended prompt is not set."
+@@ -57,7 +57,7 @@
+         return ""
+ 
+     def before_prompt_hook(self, current):
+-        if self.value is not '':
++        if self.value:
+             return gdb.prompt.substitute_prompt(self.value)
+         else:
+             return None

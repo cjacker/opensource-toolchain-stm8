@@ -1,0 +1,9 @@
+diff -Nur stm8-binutils-gdb-sources/configure_binutils.sh stm8-binutils-gdb-sourcesn/configure_binutils.sh
+--- stm8-binutils-gdb-sources/configure_binutils.sh	2021-07-18 15:26:00.000000000 +0800
++++ stm8-binutils-gdb-sourcesn/configure_binutils.sh	2024-11-21 22:40:15.769876506 +0800
+@@ -9,4 +9,4 @@
+   _PREFIX="-prefix=$PREFIX"
+ fi
+ 
+-./configure --host=$_HOST --target=stm8-none-elf32 $_PREFIX --program-prefix=stm8-
++./configure --host=$_HOST --target=stm8-none-elf32 $_PREFIX --program-prefix=stm8- --with-python=no

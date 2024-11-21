@@ -1,0 +1,50 @@
+diff -Nur binutils-2.30n/readline/complete.c binutils-2.30/readline/complete.c
+--- binutils-2.30n/readline/complete.c	2024-11-21 22:21:13.378243763 +0800
++++ binutils-2.30/readline/complete.c	2024-11-21 22:28:19.168246496 +0800
+@@ -21,6 +21,9 @@
+ 
+ #define READLINE_LIBRARY
+ 
++#define _XOPEN_SOURCE 700
++#include <wchar.h>
++
+ #if defined (HAVE_CONFIG_H)
+ #  include <config.h>
+ #endif
+@@ -64,6 +67,7 @@
+ #include "xmalloc.h"
+ #include "rlprivate.h"
+ 
++
+ #ifdef __STDC__
+ typedef int QSFUNC (const void *, const void *);
+ #else
+二进制文件 binutils-2.30n/readline/complete.o 和 binutils-2.30/readline/complete.o 不同
+diff -Nur binutils-2.30n/readline/display.c binutils-2.30/readline/display.c
+--- binutils-2.30n/readline/display.c	2024-11-21 22:21:13.381243770 +0800
++++ binutils-2.30/readline/display.c	2024-11-21 22:28:25.728261418 +0800
+@@ -21,6 +21,10 @@
+ 
+ #define READLINE_LIBRARY
+ 
++#define _XOPEN_SOURCE 700
++#include <wchar.h>
++
++
+ #if defined (HAVE_CONFIG_H)
+ #  include <config.h>
+ #endif
+diff -Nur binutils-2.30n/readline/mbutil.c binutils-2.30/readline/mbutil.c
+--- binutils-2.30n/readline/mbutil.c	2024-11-21 22:21:13.386243782 +0800
++++ binutils-2.30/readline/mbutil.c	2024-11-21 22:28:46.906309592 +0800
+@@ -21,6 +21,10 @@
+ 
+ #define READLINE_LIBRARY
+ 
++#define _XOPEN_SOURCE 700
++#include <wchar.h>
++
++
+ #if defined (HAVE_CONFIG_H)
+ #  include <config.h>
+ #endif
