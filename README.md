@@ -257,7 +257,7 @@ sudo stm8flash -cstlinkv2 -pstm8s208mb -w STM8S207/main.ihx
 This firmware will set the option bytes, also blink a LED on board, by default, it toggle PH2 for STM8S207 and PD0 for STM8S105, you can modify the codes according to your development board.
 
 ### stm8gal
-After bootloader enabled, we can use stm8gal and UART to flash the development board wired up with a USB cable.
+After bootloader enabled, we can use stm8gal and UART (on board or external adapter) to flash the target board, please refer to the datasheet to find out how to wire up.
 
 stm8gal is a tool for uplading hexfiles to the STM8 microcontroller via UART or SPI , using the built-in ROM bootloader. 
 
