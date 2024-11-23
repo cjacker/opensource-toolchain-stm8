@@ -1,6 +1,8 @@
 // blink.c
+
 // PE5 for my stm8s105 board and PD0 for my stm8s208 board
 
+// comment out this line if stm8s208
 #define STM8S105 1
 
 #include <stdint.h>
