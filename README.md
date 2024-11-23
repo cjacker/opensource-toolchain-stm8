@@ -235,6 +235,10 @@ There are BSL activate codes in stm8gal repo, you need to build it yourself:
 
 ```
 git clone https://github.com/gicking/stm8gal.git
+
+# use 1.5 release with BSL_activate codes.
+git checkout 68e6a7ae160e3b6a268beb7491575d6676cd7616
+
 cd BSL_activate
 make DEVICE=STM8S207 # ok for STM8S208MB
 ```
