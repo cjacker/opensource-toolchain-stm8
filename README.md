@@ -236,7 +236,8 @@ There are BSL activate codes in stm8gal repo, you need to build it yourself:
 ```
 git clone https://github.com/gicking/stm8gal.git
 
-# use 1.5 release with BSL_activate codes.
+# BSL_activate codes removed after v1.5.0
+# checkout v1.5.0 to build BSL_activate firmware.
 git checkout 68e6a7ae160e3b6a268beb7491575d6676cd7616
 
 cd BSL_activate
@@ -257,7 +258,7 @@ sudo stm8flash -cstlinkv2 -pstm8s208mb -w STM8S207/main.ihx
 This firmware will set the option bytes, also blink a LED on board, by default, it toggle PH2 for STM8S207 and PD0 for STM8S105, you can modify the codes according to your development board.
 
 ### stm8gal
-After bootloader enabled, we can use stm8gal and UART (on board or external adapter) to flash the target board, please refer to the datasheet to find out how to wire up.
+After option bytes progammed and bootloader enabled, we can use stm8gal and UART (on board or external adapter) to flash the target board, please refer to the datasheet to find out how to wire up.
 
 stm8gal is a tool for uplading hexfiles to the STM8 microcontroller via UART or SPI , using the built-in ROM bootloader. 
 
@@ -278,7 +279,7 @@ sudo stm8gal -p /dev/ttyUSB0 -w blink.ihx -reset 0
 
 when it prompt for 'synchronize', press the RESET button once on your development board:
 ```
-stm8gal (v1.5.0)
+stm8gal (v1.6.0)
   open serial port '/dev/ttyUSB0' ... done
   synchronize ... done (ACK)
   get device info ... done (STM8S; 128kB flash)
@@ -291,7 +292,7 @@ stm8gal (v1.5.0)
 done with program
 ```
 
-**NOTE, as mentioned above, if you use STLINK adapter flashing the board again, you may need to re-activate the bootloader.**
+**NOTE, if you use STLINK adapter to flash the board again, you may need to re-activate the bootloader.**
 
 # Debugging and flashing with stm8-gdb/OpenOCD
 
