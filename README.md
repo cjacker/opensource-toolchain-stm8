@@ -211,13 +211,28 @@ Run `stm8flash --help` to get more usage tips.
 
 ## Flashing with UART (no debugging support)
 
-### How to enable bootloader
-As mentioned above, a STLINK adapter is mandary to enable UART flashing support. actually, we need STLINK adapter and stm8flash to change some 'option bytes' of STM8 MCU to enable the 'bootloader' (BSL). Please refer to [UM0560 "STM8 bootloader user manual"](https://www.st.com/resource/en/user_manual/cd00201192-stm8-bootloader-stmicroelectronics.pdf) and corresponding datasheet of the MCU you use for more information.
+### install stm8gal
+
+[stm8gal](https://github.com/gicking/stm8gal) is a tool to upload hexfile to the STM8 microcontroller via UART or SPI using the built-in bootloader.
+
+```
+git clone https://github.com/gicking/stm8gal.git
+make
+sudo install -m0755 stm8gal /usr/bin
+
+# to find out how to use stm8gal
+stm8gal --help
+```
+
+### enable bootloader
+STLINK adapter is mandary to enable UART flashing support. Actually, we need STLINK adapter and stm8flash to change some 'option bytes' to enable the 'bootloader' (BSL). 
+
+Please refer to [UM0560 "STM8 bootloader user manual"](https://www.st.com/resource/en/user_manual/cd00201192-stm8-bootloader-stmicroelectronics.pdf) and corresponding datasheet for more information.
 
 Not all STM8 models have a bootloader, the support list as below (from UM0560):
 <img src="https://user-images.githubusercontent.com/1625340/156280459-aabdcd6a-39e9-4806-9bb3-689c06a71933.png" width="60%"/>
 
-Option bytes of STM8S208MB (from STM8S208MB datasheet):
+And the option bytes info of STM8S208MB (from STM8S208MB datasheet):
 <img src="https://user-images.githubusercontent.com/1625340/156280543-c6d7b658-7653-43b1-bc04-f9964648bc7c.png" width="60%"/>
 
 What we need to enable bootloader is:
@@ -227,26 +242,16 @@ set 0x487E to 0x55
 set 0x487F to 0xAA
 ```
 
-There is various way to accomplish this, the STVP for windows officially provide by ST have option bytes configuration support, but as I know, it only set 0x487E and does not set 0x487F.
+There is various way to change the option bytes. the STVP for windows officially provide by ST have option bytes configuration support.
 
-For linux, there is no STVP provided. Here we use another way: flash a firmware once to setup these option bytes. after that, the UART flashing can be used until you flash this development board with STLINK again.
+For linux, there is no STVP provided. Here we use another way: use STLINK to flash a special firmware once to setup these option bytes. 
 
-There are BSL activate codes in stm8gal repo, you need to build it yourself:
+There are BSL_activate codes in stm8gal repo, you need to build it yourself:
 
 ```
 git clone https://github.com/gicking/stm8gal.git
-
-# BSL_activate codes removed after v1.5.0
-# checkout v1.5.0 to build BSL_activate firmware.
-git checkout 68e6a7ae160e3b6a268beb7491575d6676cd7616
-
-cd BSL_activate
-make DEVICE=STM8S207 # ok for STM8S208MB
-```
-
-by the way, If you use STM8S105, you should:
-```
-make DEVICE=STM8S105
+cd stm8gal/tools/BSL_activate
+make DEVICE=STM8S207 # also work with STM8S208MB
 ```
 
 After building successfully, "STM8S207/main.ihx" will be generated.
@@ -257,27 +262,23 @@ sudo stm8flash -cstlinkv2 -pstm8s208mb -w STM8S207/main.ihx
 
 This firmware will set the option bytes, also blink a LED on board, by default, it toggle PH2 for STM8S207 and PD0 for STM8S105, you can modify the codes according to your development board.
 
-### stm8gal
-After option bytes progammed and bootloader enabled, we can use stm8gal and UART (on board or external adapter) to flash the target board, please refer to the datasheet to find out how to wire up.
-
-stm8gal is a tool for uplading hexfiles to the STM8 microcontroller via UART or SPI , using the built-in ROM bootloader. 
+by the way, If you use STM8S105, you should:
 
 ```
-git clone https://github.com/gicking/stm8gal.git
-make
-sudo install -m0755 stm8gal /usr/bin
-```
-For usage:
-```
-stm8gal --help
+cd tools/BSL_activate
+make DEVICE=STM8S105
 ```
 
-For flashing:
+### flashing via UART
+After option bytes progammed and bootloader enabled, we can use stm8gal and UART adapter(on board or external adapter) to flash the target board, please refer to the datasheet to find out UART pins and wire up.
+
+Using blink_baremetal example in this repo:
+
 ```
 sudo stm8gal -p /dev/ttyUSB0 -w blink.ihx -reset 0
 ```
 
-when it prompt for 'synchronize', press the RESET button once on your development board:
+when it prompt for 'synchronize', press the RESET button of target board:
 ```
 stm8gal (v1.6.0)
   open serial port '/dev/ttyUSB0' ... done
